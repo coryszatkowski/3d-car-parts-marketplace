@@ -1,7 +1,22 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+//import { User, Session } from '@supabase/supabase-js'
 import { supabase, Profile } from '../lib/supabase'
 import { toast } from 'sonner'
+
+type User = {
+  id: string
+  email: string
+  user_metadata: {
+    full_name?: string
+    avatar_url?: string
+    username?: string
+  }
+}
+
+type Session = {
+  user: User
+} | null
+
 
 interface AuthContextType {
   user: User | null
