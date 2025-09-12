@@ -1,15 +1,23 @@
-import { createClient } from '@supabase/supabase-js'
+// Temporarily disable Supabase to fix deployment
+// import { createClient } from '@supabase/supabase-js'
 
-// Use completely dummy but valid-format values to prevent client validation errors
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://dummy.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.dummy'
-
-// Only warn in development if variables are missing - don't break production
-if ((!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) && import.meta.env.DEV) {
-  console.warn('Supabase environment variables not configured - auth features will be disabled')
+// Mock Supabase client for demo purposes
+const mockSupabaseClient = {
+  auth: {
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signInWithPassword: () => Promise.resolve({ error: { message: 'Demo mode - auth disabled' } }),
+    signUp: () => Promise.resolve({ error: { message: 'Demo mode - auth disabled' } }),
+    signOut: () => Promise.resolve({ error: null }),
+    resetPasswordForEmail: () => Promise.resolve({ error: { message: 'Demo mode - auth disabled' } })
+  },
+  from: () => ({
+    select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { message: 'Demo mode - database disabled' } }) }) }),
+    update: () => ({ eq: () => Promise.resolve({ error: { message: 'Demo mode - database disabled' } }) })
+  })
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = mockSupabaseClient
 
 // Auth types
 export type User = {
