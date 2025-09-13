@@ -1,21 +1,20 @@
-import { createClient, User as SupabaseUser } from '@supabase/supabase-js';
+import { createClient, User as SupabaseUser } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    '⚠️ Supabase environment variables are missing. Please check your .env.local file.'
-  );
-  console.warn('The app will use dummy values and authentication will not work.');
+  const errorMessage = "❌ Supabase environment variables are missing!";
+  console.error(errorMessage);
+  console.error("Please create a .env.local file with:");
+  console.error("VITE_SUPABASE_URL=your_supabase_project_url");
+  console.error("VITE_SUPABASE_ANON_KEY=your_supabase_anon_key");
+  throw new Error(errorMessage);
 }
 
-// Create Supabase client
-export const supabase = createClient(
-  supabaseUrl || 'https://dummy.supabase.co',
-  supabaseAnonKey || 'dummy-key'
-);
+// Create Supabase client with real credentials
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Re-export Supabase User type for consistency
 export type User = SupabaseUser;
