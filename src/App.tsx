@@ -1,24 +1,35 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { AuthProvider } from './contexts/AuthContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { Toaster } from 'sonner';
-import { Skeleton } from './components/ui/skeleton';
+import { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { Toaster } from "sonner";
+import { Skeleton } from "./components/ui/skeleton";
 
 // Lazy load pages for better performance
 const HomePage = lazy(() =>
-  import('./pages/HomePage').then((module) => ({ default: module.HomePage }))
+  import("./pages/HomePage").then((module) => ({ default: module.HomePage }))
 );
 const ProductPage = lazy(() =>
-  import('./pages/ProductPage').then((module) => ({ default: module.ProductPage }))
+  import("./pages/ProductPage").then((module) => ({
+    default: module.ProductPage,
+  }))
 );
 const MyAccountPage = lazy(() =>
-  import('./pages/MyAccountPage').then((module) => ({ default: module.MyAccountPage }))
+  import("./pages/MyAccountPage").then((module) => ({
+    default: module.MyAccountPage,
+  }))
 );
 const SettingsPage = lazy(() =>
-  import('./pages/SettingsPage').then((module) => ({ default: module.SettingsPage }))
+  import("./pages/SettingsPage").then((module) => ({
+    default: module.SettingsPage,
+  }))
+);
+const AuthCallback = lazy(() =>
+  import("./pages/AuthCallback").then((module) => ({
+    default: module.AuthCallback,
+  }))
 );
 
 // Loading component for suspense fallback
@@ -52,6 +63,7 @@ export default function App() {
                   <Route path="/product/:id" element={<ProductPage />} />
                   <Route path="/my-account" element={<MyAccountPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </Suspense>
             </main>
