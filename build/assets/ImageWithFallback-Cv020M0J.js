@@ -1,0 +1,6 @@
+import{c as d}from"./index-BeUK1Jxh.js";import{j as i}from"./ui-7ID9SH2a.js";import{b as n}from"./vendor-CDpTtB3_.js";/**
+ * @license lucide-react v0.487.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const g=[["path",{d:"M7.9 20A9 9 0 1 0 4 16.1L2 22Z",key:"vv11sd"}]],u=d("message-circle",g),m="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4KCg==";function b(t){const[c,l]=n.useState(!1),o=()=>{l(!0)},{src:e,alt:I,style:a,className:r,...s}=t;return c?i.jsx("div",{className:`inline-block bg-gray-100 text-center align-middle ${r??""}`,style:a,children:i.jsx("div",{className:"flex items-center justify-center w-full h-full",children:i.jsx("img",{src:m,alt:"Error loading image",...s,"data-original-url":e})})}):i.jsx("img",{src:e,alt:I,className:r,style:a,...s,onError:o})}export{b as I,u as M};

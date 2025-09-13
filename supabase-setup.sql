@@ -193,6 +193,36 @@ CREATE TRIGGER handle_updated_at_user_garage
   BEFORE UPDATE ON user_garage
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+-- Create storage buckets for product files
+INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('stl-files', 'stl-files', true);
+
+-- Storage policies for product images
+CREATE POLICY "Public can view product images" ON storage.objects
+  FOR SELECT USING (bucket_id = 'product-images');
+
+CREATE POLICY "Authenticated users can upload product images" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'product-images' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Users can update their own product images" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'product-images' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can delete their own product images" ON storage.objects
+  FOR DELETE USING (bucket_id = 'product-images' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Storage policies for STL files
+CREATE POLICY "Public can view STL files" ON storage.objects
+  FOR SELECT USING (bucket_id = 'stl-files');
+
+CREATE POLICY "Authenticated users can upload STL files" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'stl-files' AND auth.role() = 'authenticated');
+
+CREATE POLICY "Users can update their own STL files" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'stl-files' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can delete their own STL files" ON storage.objects
+  FOR DELETE USING (bucket_id = 'stl-files' AND auth.uid()::text = (storage.foldername(name))[1]);
+
 -- Insert some sample data (optional)
 -- This will create some test products once you have users
 -- You can run this after creating your first user account
