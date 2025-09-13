@@ -32,19 +32,37 @@ export class CarCatalog {
   }
 
   /**
-   * Get trims for a specific model
+   * Get trims for a specific model and year
    */
-  static getTrimsByModel(makeId: string, modelId: string): string[] {
+  static getTrimsByModel(makeId: string, modelId: string, year?: number): string[] {
     const model = this.getModel(makeId, modelId);
-    return model ? model.trims : [];
+    if (!model) return [];
+    
+    // If year is specified and model has year-specific data, use that
+    if (year && model.yearSpecificData) {
+      const yearData = model.yearSpecificData.find(data => data.year === year);
+      if (yearData) return yearData.trims;
+    }
+    
+    // Fallback to legacy trims
+    return model.trims;
   }
 
   /**
-   * Get engines for a specific model
+   * Get engines for a specific model and year
    */
-  static getEnginesByModel(makeId: string, modelId: string): string[] {
+  static getEnginesByModel(makeId: string, modelId: string, year?: number): string[] {
     const model = this.getModel(makeId, modelId);
-    return model ? model.engines : [];
+    if (!model) return [];
+    
+    // If year is specified and model has year-specific data, use that
+    if (year && model.yearSpecificData) {
+      const yearData = model.yearSpecificData.find(data => data.year === year);
+      if (yearData) return yearData.engines;
+    }
+    
+    // Fallback to legacy engines
+    return model.engines;
   }
 
   /**
@@ -179,8 +197,8 @@ export class CarCatalog {
     if (selection.year && selection.make && selection.model) {
       const makes = this.getMakesByYear(selection.year);
       const models = this.getModelsByYearAndMake(selection.year, selection.make);
-      const trims = this.getTrimsByModel(selection.make, selection.model);
-      const engines = this.getEnginesByModel(selection.make, selection.model);
+      const trims = this.getTrimsByModel(selection.make, selection.model, selection.year);
+      const engines = this.getEnginesByModel(selection.make, selection.model, selection.year);
       return { 
         makes, 
         models, 
@@ -196,9 +214,9 @@ export class CarCatalog {
     const years = selection.make && selection.model ? 
       this.getYearsByModel(selection.make, selection.model) : [];
     const trims = selection.make && selection.model ? 
-      this.getTrimsByModel(selection.make, selection.model) : [];
+      this.getTrimsByModel(selection.make, selection.model, selection.year) : [];
     const engines = selection.make && selection.model ? 
-      this.getEnginesByModel(selection.make, selection.model) : [];
+      this.getEnginesByModel(selection.make, selection.model, selection.year) : [];
 
     return { makes, models, years, trims, engines };
   }
