@@ -1,8 +1,14 @@
-import { Button } from "./ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { ImageWithFallback } from './figma/ImageWithFallback';
+import { CarSelector } from './car/CarSelector';
 
 export function Hero() {
+  const handleCarSelection = (selection: any) => {
+    console.log('Car selected:', selection);
+    // TODO: Navigate to parts page or show results
+  };
+
   return (
     <section className="relative bg-gradient-to-b from-background to-background/80 py-24 overflow-hidden">
       {/* Carbon fiber texture overlay */}
@@ -14,78 +20,32 @@ export function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Content */}
           <div className="text-center lg:text-left">
-            <h1 className="text-5xl lg:text-7xl font-bold mb-6" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <h1
+              className="text-5xl lg:text-7xl font-bold mb-6"
+              style={{
+                fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}
+            >
               <span className="text-foreground">Whip</span>
               <span style={{ color: '#0a68b1' }}>Lab</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Print it. Mod it. Drive it.
-            </p>
+            <p className="text-xl text-muted-foreground mb-8">Print it. Mod it. Drive it.</p>
 
             {/* Car Selector */}
             <div className="bg-card border border-border rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-foreground">Find Parts for Your Ride</h3>
-              <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
-                <Select>
-                  <SelectTrigger className="bg-input-background">
-                    <SelectValue placeholder="Year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2023">2023</SelectItem>
-                    <SelectItem value="2022">2022</SelectItem>
-                    <SelectItem value="2021">2021</SelectItem>
-                    <SelectItem value="2020">2020</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                <Select>
-                  <SelectTrigger className="bg-input-background">
-                    <SelectValue placeholder="Make" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bmw">BMW</SelectItem>
-                    <SelectItem value="toyota">Toyota</SelectItem>
-                    <SelectItem value="honda">Honda</SelectItem>
-                    <SelectItem value="ford">Ford</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select>
-                  <SelectTrigger className="bg-input-background">
-                    <SelectValue placeholder="Model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="335i">335i</SelectItem>
-                    <SelectItem value="m3">M3</SelectItem>
-                    <SelectItem value="supra">Supra</SelectItem>
-                    <SelectItem value="civic">Civic</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select>
-                  <SelectTrigger className="bg-input-background">
-                    <SelectValue placeholder="Trim" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="base">Base</SelectItem>
-                    <SelectItem value="sport">Sport</SelectItem>
-                    <SelectItem value="msport">M-Sport</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select>
-                  <SelectTrigger className="bg-input-background">
-                    <SelectValue placeholder="Engine" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="n54">N54</SelectItem>
-                    <SelectItem value="n55">N55</SelectItem>
-                    <SelectItem value="2jz">2JZ-GTE</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <h3 className="text-lg font-semibold mb-4 text-foreground">
+                Find Parts for Your Ride
+              </h3>
+              <CarSelector onSelectionChange={handleCarSelection} />
               
-              <Button className="w-full text-white" style={{ backgroundColor: '#0a68b1' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#0856a0'} onMouseLeave={(e) => e.target.style.backgroundColor = '#0a68b1'}>
+              <Button
+                className="w-full text-white mt-4"
+                style={{ backgroundColor: '#0a68b1' }}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.backgroundColor = '#0856a0')}
+                onMouseLeave={(e) => ((e.target as HTMLElement).style.backgroundColor = '#0a68b1')}
+              >
                 Find Parts
               </Button>
             </div>

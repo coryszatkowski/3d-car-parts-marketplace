@@ -1,23 +1,21 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Separator } from "./ui/separator";
-import { Progress } from "./ui/progress";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { ThreeDViewer } from "./ThreeDViewer";
-import { 
-  Heart, 
-  Share2, 
-  Download, 
-  ShoppingCart, 
-  Star, 
-  User, 
-  Calendar, 
-  Settings, 
-  FileText,
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Separator } from './ui/separator';
+import { Progress } from './ui/progress';
+import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ThreeDViewer } from './ThreeDViewer';
+import {
+  Heart,
+  Share2,
+  Download,
+  ShoppingCart,
+  Star,
+  User,
+  Settings,
   Printer,
   Gauge,
   Thermometer,
@@ -27,8 +25,8 @@ import {
   Eye,
   MessageCircle,
   ThumbsUp,
-  Box
-} from "lucide-react";
+  Box,
+} from 'lucide-react';
 
 interface ProductPageProps {
   onBackClick?: () => void;
@@ -40,9 +38,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
   const [following, setFollowing] = useState(false);
 
   const productImages = [
-    "https://images.unsplash.com/photo-1625465329054-dde00a74a072?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBtb2RpZmljYXRpb24lMjAzZCUyMHByaW50ZWQlMjBwYXJ0c3xlbnwxfHx8fDE3NTc2MjcyNTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    "https://images.unsplash.com/photo-1558176293-ba5d3771385f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdXRvbW90aXZlJTIwc3BvaWxlciUyMHdpbmd8ZW58MXx8fHwxNzU3NjI3MjUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    "https://images.unsplash.com/photo-1739169169463-450148af26ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHwzZCUyMHByaW50ZXIlMjBmaWxhbWVudCUyMGF1dG9tb3RpdmV8ZW58MXx8fHwxNzU3NjI3MjU2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    'https://images.unsplash.com/photo-1625465329054-dde00a74a072?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBtb2RpZmljYXRpb24lMjAzZCUyMHByaW50ZWQlMjBwYXJ0c3xlbnwxfHx8fDE3NTc2MjcyNTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    'https://images.unsplash.com/photo-1558176293-ba5d3771385f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdXRvbW90aXZlJTIwc3BvaWxlciUyMHdpbmd8ZW58MXx8fHwxNzU3NjI3MjUzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    'https://images.unsplash.com/photo-1739169169463-450148af26ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHwzZCUyMHByaW50ZXIlMjBmaWxhbWVudCUyMGF1dG9tb3RpdmV8ZW58MXx8fHwxNzU3NjI3MjU2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
   ];
 
   const galleryItems = [...productImages, '3d-viewer'];
@@ -63,9 +61,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 text-muted-foreground">
               {onBackClick && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={onBackClick}
                   className="mr-2 hover:bg-primary/10"
                 >
@@ -102,7 +100,7 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </>
               )}
-              
+
               {/* Navigation buttons */}
               <Button
                 variant="outline"
@@ -170,7 +168,10 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="flex items-center space-x-1">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`h-4 w-4 ${i < 4 ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < 4 ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
+                        />
                       ))}
                       <span className="text-muted-foreground ml-2">(47 reviews)</span>
                     </div>
@@ -213,8 +214,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
               </div>
 
               <p className="text-muted-foreground mb-6">
-                Engineered for maximum downforce and aggressive aesthetics. This front splitter increases front-end grip 
-                while maintaining ground clearance for daily driving. CFD-optimized design with integrated undertray compatibility.
+                Engineered for maximum downforce and aggressive aesthetics. This front splitter
+                increases front-end grip while maintaining ground clearance for daily driving.
+                CFD-optimized design with integrated undertray compatibility.
               </p>
 
               {/* Action buttons */}
@@ -241,11 +243,13 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                     </Avatar>
                     <div>
                       <h4>AeroMods_Pro</h4>
-                      <p className="text-sm text-muted-foreground">Professional Designer • 156 parts</p>
+                      <p className="text-sm text-muted-foreground">
+                        Professional Designer • 156 parts
+                      </p>
                     </div>
                   </div>
                   <Button
-                    variant={following ? "outline" : "default"}
+                    variant={following ? 'outline' : 'default'}
                     size="sm"
                     onClick={() => setFollowing(!following)}
                   >
@@ -379,7 +383,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                     <div className="p-4 bg-muted/20 rounded-lg">
                       <h5 className="mb-2">Minimum Build Volume</h5>
                       <p className="text-muted-foreground">300 x 300 x 200mm</p>
-                      <p className="text-sm text-muted-foreground mt-1">Most popular printers supported</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Most popular printers supported
+                      </p>
                     </div>
                     <div className="p-4 bg-muted/20 rounded-lg">
                       <h5 className="mb-2">Post-Processing</h5>
@@ -407,7 +413,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                     <div className="space-y-3">
                       <div className="p-3 bg-primary/10 rounded-md border border-primary/20">
                         <div className="flex items-center space-x-2 mb-1">
-                          <Badge variant="secondary" className="bg-primary/20 text-primary">Perfect Fit</Badge>
+                          <Badge variant="secondary" className="bg-primary/20 text-primary">
+                            Perfect Fit
+                          </Badge>
                         </div>
                         <p>2016-2021 Honda Civic (10th Gen)</p>
                         <p className="text-sm text-muted-foreground">Sport, Si, Type R trims</p>
@@ -417,7 +425,9 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                           <Badge variant="outline">Minor Modification</Badge>
                         </div>
                         <p>2016-2021 Honda Civic (10th Gen)</p>
-                        <p className="text-sm text-muted-foreground">LX, EX trims (requires bumper modification)</p>
+                        <p className="text-sm text-muted-foreground">
+                          LX, EX trims (requires bumper modification)
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -439,7 +449,8 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                 <div>
                   <h4 className="mb-4">Clearance Verification</h4>
                   <p className="text-muted-foreground mb-4">
-                    Before printing, verify these measurements on your vehicle to ensure proper fitment:
+                    Before printing, verify these measurements on your vehicle to ensure proper
+                    fitment:
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 bg-muted/10 rounded-lg">
@@ -473,7 +484,10 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                       <div className="text-4xl mb-2">4.2</div>
                       <div className="flex items-center justify-center space-x-1 mb-2">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`h-4 w-4 ${i < 4 ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${i < 4 ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
+                          />
                         ))}
                       </div>
                       <p className="text-muted-foreground">47 reviews</p>
@@ -483,7 +497,10 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                         <div key={stars} className="flex items-center space-x-2">
                           <span className="text-sm w-3">{stars}</span>
                           <Star className="h-3 w-3 fill-primary text-primary" />
-                          <Progress value={stars === 5 ? 60 : stars === 4 ? 25 : stars === 3 ? 10 : 3} className="flex-1" />
+                          <Progress
+                            value={stars === 5 ? 60 : stars === 4 ? 25 : stars === 3 ? 10 : 3}
+                            className="flex-1"
+                          />
                           <span className="text-sm text-muted-foreground w-8">
                             {stars === 5 ? '28' : stars === 4 ? '12' : stars === 3 ? '5' : '2'}
                           </span>
@@ -512,45 +529,53 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
               <div className="space-y-4">
                 {[
                   {
-                    name: "SpeedDemon_2021",
+                    name: 'SpeedDemon_2021',
                     rating: 5,
-                    date: "2 weeks ago",
+                    date: '2 weeks ago',
                     verified: true,
-                    review: "Incredible quality and fitment! Printed in ASA and the surface finish is amazing. Definitely noticed improved front-end grip on track days. Installation was straightforward with the included hardware.",
+                    review:
+                      'Incredible quality and fitment! Printed in ASA and the surface finish is amazing. Definitely noticed improved front-end grip on track days. Installation was straightforward with the included hardware.',
                     helpful: 24,
-                    vehicle: "2020 Civic Si"
+                    vehicle: '2020 Civic Si',
                   },
                   {
-                    name: "TrackRat_Honda",
+                    name: 'TrackRat_Honda',
                     rating: 4,
-                    date: "1 month ago",
+                    date: '1 month ago',
                     verified: true,
-                    review: "Great design and performance improvement is noticeable. Only complaint is that it does reduce ground clearance more than expected. Had to be careful with steep driveways.",
+                    review:
+                      'Great design and performance improvement is noticeable. Only complaint is that it does reduce ground clearance more than expected. Had to be careful with steep driveways.',
                     helpful: 18,
-                    vehicle: "2019 Civic Type R"
+                    vehicle: '2019 Civic Type R',
                   },
                   {
-                    name: "PrinterPro_Mods",
+                    name: 'PrinterPro_Mods',
                     rating: 5,
-                    date: "6 weeks ago",
+                    date: '6 weeks ago',
                     verified: true,
-                    review: "As someone who prints a lot of automotive parts, this is top-tier quality. The STL files are clean, properly scaled, and print without issues. Highly recommend PETG for durability.",
+                    review:
+                      'As someone who prints a lot of automotive parts, this is top-tier quality. The STL files are clean, properly scaled, and print without issues. Highly recommend PETG for durability.',
                     helpful: 31,
-                    vehicle: "2018 Civic Sport"
-                  }
+                    vehicle: '2018 Civic Sport',
+                  },
                 ].map((review, index) => (
                   <Card key={index}>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
                           <Avatar>
-                            <AvatarFallback>{review.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>
+                              {review.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
                           </Avatar>
                           <div>
                             <div className="flex items-center space-x-2">
                               <h5>{review.name}</h5>
                               {review.verified && (
-                                <Badge variant="secondary" className="text-xs bg-primary/20 text-primary">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs bg-primary/20 text-primary"
+                                >
                                   Verified Purchase
                                 </Badge>
                               )}
@@ -564,7 +589,10 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
                         </div>
                         <div className="flex items-center space-x-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                            <Star
+                              key={i}
+                              className={`h-4 w-4 ${i < review.rating ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
+                            />
                           ))}
                         </div>
                       </div>
@@ -595,11 +623,24 @@ export function ProductPage({ onBackClick }: ProductPageProps) {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { name: "Side Skirt Extensions", price: "$19.99", rating: 4.3, image: productImages[1] },
-                { name: "Rear Diffuser Kit", price: "$34.99", rating: 4.7, image: productImages[2] },
-                { name: "Canard Set (4pc)", price: "$15.99", rating: 4.1, image: productImages[0] }
+                {
+                  name: 'Side Skirt Extensions',
+                  price: '$19.99',
+                  rating: 4.3,
+                  image: productImages[1],
+                },
+                {
+                  name: 'Rear Diffuser Kit',
+                  price: '$34.99',
+                  rating: 4.7,
+                  image: productImages[2],
+                },
+                { name: 'Canard Set (4pc)', price: '$15.99', rating: 4.1, image: productImages[0] },
               ].map((product, index) => (
-                <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  key={index}
+                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <div className="aspect-square bg-muted">
                     <ImageWithFallback
                       src={product.image}

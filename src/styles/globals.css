@@ -8,15 +8,15 @@
   --card-foreground: #ffffff;
   --popover: #262626;
   --popover-foreground: #ffffff;
-  --primary: #007BFF;
+  --primary: #007bff;
   --primary-foreground: #ffffff;
-  --secondary: #E60023;
+  --secondary: #e60023;
   --secondary-foreground: #ffffff;
   --muted: #404040;
   --muted-foreground: #a1a1aa;
   --accent: #333333;
   --accent-foreground: #ffffff;
-  --destructive: #E60023;
+  --destructive: #e60023;
   --destructive-foreground: #ffffff;
   --border: rgba(255, 255, 255, 0.1);
   --input: transparent;
@@ -24,21 +24,21 @@
   --switch-background: #404040;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #007BFF;
-  --chart-1: #007BFF;
-  --chart-2: #E60023;
+  --ring: #007bff;
+  --chart-1: #007bff;
+  --chart-2: #e60023;
   --chart-3: #10b981;
   --chart-4: #f59e0b;
   --chart-5: #8b5cf6;
   --radius: 0.625rem;
   --sidebar: #1a1a1a;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #007BFF;
+  --sidebar-primary: #007bff;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #262626;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #007BFF;
+  --sidebar-ring: #007bff;
 }
 
 .dark {
@@ -133,7 +133,7 @@
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */
 @layer base {
-  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
     h1 {
       font-size: var(--text-2xl);
       font-weight: var(--font-weight-medium);

@@ -1,28 +1,28 @@
-import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { Separator } from '../ui/separator'
-import { useAuth } from '../../contexts/AuthContext'
-import { Eye, EyeOff, Mail, Lock, User, Github } from 'lucide-react'
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Separator } from '../ui/separator';
+import { useAuth } from '../../contexts/AuthContext';
+import { Eye, EyeOff, Github } from 'lucide-react';
 
 interface AuthModalProps {
-  children: React.ReactNode
-  defaultTab?: 'signin' | 'signup'
+  children: React.ReactNode;
+  defaultTab?: 'signin' | 'signup';
 }
 
 export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
-  const [open, setOpen] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const { signIn, signUp, resetPassword } = useAuth()
+  const [open, setOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const [signInData, setSignInData] = useState({
     email: '',
     password: '',
-  })
+  });
 
   const [signUpData, setSignUpData] = useState({
     email: '',
@@ -30,76 +30,68 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
     confirmPassword: '',
     fullName: '',
     username: '',
-  })
+  });
 
-  const [resetEmail, setResetEmail] = useState('')
-  const [showResetPassword, setShowResetPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const { error } = await signIn(signInData.email, signInData.password)
-    
+    const { error } = await signIn(signInData.email, signInData.password);
+
     if (!error) {
-      setOpen(false)
-      setSignInData({ email: '', password: '' })
+      setOpen(false);
+      setSignInData({ email: '', password: '' });
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (signUpData.password !== signUpData.confirmPassword) {
-      alert('Passwords do not match')
-      return
+      alert('Passwords do not match');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    const { error } = await signUp(
-      signUpData.email, 
-      signUpData.password,
-      {
-        full_name: signUpData.fullName,
-        username: signUpData.username,
-      }
-    )
-    
+    const { error } = await signUp(signUpData.email, signUpData.password, {
+      full_name: signUpData.fullName,
+      username: signUpData.username,
+    });
+
     if (!error) {
-      setOpen(false)
-      setSignUpData({ email: '', password: '', confirmPassword: '', fullName: '', username: '' })
+      setOpen(false);
+      setSignUpData({ email: '', password: '', confirmPassword: '', fullName: '', username: '' });
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const { error } = await resetPassword(resetEmail)
-    
+    const { error } = await resetPassword(resetEmail);
+
     if (!error) {
-      setShowResetPassword(false)
-      setResetEmail('')
+      setShowResetPassword(false);
+      setResetEmail('');
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="!w-[600px] !max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold">
-            Welcome to WhipLab
-          </DialogTitle>
+          <DialogTitle className="text-center text-2xl font-bold">Welcome to WhipLab</DialogTitle>
         </DialogHeader>
 
         {showResetPassword ? (
@@ -110,21 +102,17 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
                 Enter your email address and we'll send you a reset link.
               </p>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="reset-email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="reset-email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
+              <Input
+                id="reset-email"
+                type="email"
+                placeholder="Enter your email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+              />
             </div>
 
             <div className="flex space-x-2">
@@ -152,31 +140,30 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={signInData.email}
-                      onChange={(e) => setSignInData(prev => ({ ...prev, email: e.target.value }))}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={signInData.email}
+                    onChange={(e) =>
+                      setSignInData((prev) => ({ ...prev, email: e.target.value }))
+                    }
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="signin-password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       value={signInData.password}
-                      onChange={(e) => setSignInData(prev => ({ ...prev, password: e.target.value }))}
-                      className="pl-10 pr-10"
+                      onChange={(e) =>
+                        setSignInData((prev) => ({ ...prev, password: e.target.value }))
+                      }
+                      className="pr-10"
                       required
                     />
                     <button
@@ -211,18 +198,16 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-fullname">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="signup-fullname"
-                        type="text"
-                        placeholder="John Doe"
-                        value={signUpData.fullName}
-                        onChange={(e) => setSignUpData(prev => ({ ...prev, fullName: e.target.value }))}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
+                    <Input
+                      id="signup-fullname"
+                      type="text"
+                      placeholder="John Doe"
+                      value={signUpData.fullName}
+                      onChange={(e) =>
+                        setSignUpData((prev) => ({ ...prev, fullName: e.target.value }))
+                      }
+                      required
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -232,7 +217,9 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
                       type="text"
                       placeholder="johndoe"
                       value={signUpData.username}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, username: e.target.value }))}
+                      onChange={(e) =>
+                        setSignUpData((prev) => ({ ...prev, username: e.target.value }))
+                      }
                       required
                     />
                   </div>
@@ -240,31 +227,30 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
 
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={signUpData.email}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, email: e.target.value }))}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={signUpData.email}
+                    onChange={(e) =>
+                      setSignUpData((prev) => ({ ...prev, email: e.target.value }))
+                    }
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="signup-password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Create a password"
                       value={signUpData.password}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, password: e.target.value }))}
-                      className="pl-10 pr-10"
+                      onChange={(e) =>
+                        setSignUpData((prev) => ({ ...prev, password: e.target.value }))
+                      }
+                      className="pr-10"
                       required
                     />
                     <button
@@ -279,18 +265,16 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
 
                 <div className="space-y-2">
                   <Label htmlFor="signup-confirm-password">Confirm Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="signup-confirm-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Confirm your password"
-                      value={signUpData.confirmPassword}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
+                  <Input
+                    id="signup-confirm-password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Confirm your password"
+                    value={signUpData.confirmPassword}
+                    onChange={(e) =>
+                      setSignUpData((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                    }
+                    required
+                  />
                 </div>
 
                 <Button type="submit" className="w-full" disabled={loading}>
@@ -306,9 +290,7 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
             <Separator className="w-full" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
           </div>
         </div>
 
@@ -318,5 +300,5 @@ export function AuthModal({ children, defaultTab = 'signin' }: AuthModalProps) {
         </Button>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

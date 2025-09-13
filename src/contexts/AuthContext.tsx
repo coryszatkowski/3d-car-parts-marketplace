@@ -1,56 +1,58 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { supabase, Profile } from '../lib/supabase'
-import { toast } from 'sonner'
+import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase, User, Profile, Car, CarInput } from '../lib/supabase';
+import { toast } from 'sonner';
 
 interface AuthContextType {
-  user: User | null
-  profile: Profile | null
-  session: Session | null
-  loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>
-  signOut: () => Promise<void>
-  resetPassword: (email: string) => Promise<{ error: any }>
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>
+  user: User | null;
+  profile: Profile | null;
+  cars: Car[];
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
+  addCar: (carData: CarInput) => Promise<{ error: any }>;
+  updateCar: (carId: string, updates: Partial<CarInput>) => Promise<{ error: any }>;
+  deleteCar: (carId: string) => Promise<{ error: any }>;
+  setPrimaryCar: (carId: string) => Promise<{ error: any }>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
+      setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id)
+        fetchProfile(session.user.id);
+        fetchCars(session.user.id);
       }
-      setLoading(false)
-    })
+      setLoading(false);
+    });
 
-    // Listen for auth changes
+    // Listen for changes on auth state
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id)
+        fetchProfile(session.user.id);
+        fetchCars(session.user.id);
       } else {
-        setProfile(null)
+        setProfile(null);
+        setCars([]);
       }
-      setLoading(false)
-    })
+    });
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -58,112 +60,345 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .single();
 
       if (error) {
-        console.error('Error fetching profile:', error)
-        return
+        console.error('Error fetching profile:', error);
+        
+        // Check if it's a table not found error
+        if (error.message.includes('Could not find the table') || error.message.includes('relation "profiles" does not exist')) {
+          console.error('💡 Database setup needed. Run the SQL commands from supabase-setup.sql in your Supabase dashboard.');
+          return;
+        }
+        
+        // If profile doesn't exist, create one
+        await createProfile(userId);
+        return;
       }
-
-      setProfile(data)
+      setProfile(data);
     } catch (error) {
-      console.error('Error fetching profile:', error)
+      console.error('Error fetching profile:', error);
     }
-  }
+  };
+
+  const createProfile = async (userId: string) => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: userId,
+            username: user.user.user_metadata?.username || user.user.email?.split('@')[0] || 'user',
+            full_name: user.user.user_metadata?.full_name || user.user.email?.split('@')[0] || 'User',
+            avatar_url: user.user.user_metadata?.avatar_url,
+            is_creator: false,
+          },
+        ]);
+
+      if (error) {
+        console.error('Error creating profile:', error);
+        
+        // Check if it's a table not found error
+        if (error.message.includes('Could not find the table') || error.message.includes('relation "profiles" does not exist')) {
+          toast.error('Database not set up. Please run the setup script in Supabase dashboard.');
+          console.error('💡 Database setup needed. Run the SQL commands from supabase-setup.sql in your Supabase dashboard.');
+        } else {
+          toast.error('Failed to create user profile');
+        }
+      } else {
+        // Fetch the newly created profile
+        await fetchProfile(userId);
+      }
+    } catch (error) {
+      console.error('Error creating profile:', error);
+      toast.error('Failed to create user profile');
+    }
+  };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Welcome back!')
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      toast.success('Successfully signed in!');
+      return { error: null };
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      return { error };
     }
-
-    return { error }
-  }
+  };
 
   const signUp = async (email: string, password: string, metadata?: any) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata,
-      },
-    })
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: metadata,
+        },
+      });
 
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Check your email for confirmation!')
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      // Create profile after signup
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: data.user.id,
+              username: metadata?.username || data.user.email?.split('@')[0] || 'user',
+              full_name: metadata?.full_name || data.user.email?.split('@')[0] || 'User',
+              avatar_url: metadata?.avatar_url,
+              is_creator: false,
+            },
+          ]);
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          toast.error('Account created but profile setup failed. Please try logging in.');
+        }
+      }
+
+      toast.success(
+        'Account created successfully! Please check your email to verify your account.'
+      );
+      return { error: null };
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      return { error };
     }
-
-    return { error }
-  }
+  };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Signed out successfully')
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setUser(null);
+      setProfile(null);
+      toast.success('Successfully signed out');
+    } catch (error) {
+      toast.error('Error signing out');
+      console.error('Error:', error);
     }
-  }
+  };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    })
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
 
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Password reset email sent!')
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      toast.success('Password reset email sent! Check your inbox.');
+      return { error: null };
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      return { error };
     }
-
-    return { error }
-  }
+  };
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return { error: new Error('No user logged in') }
+    try {
+      if (!user) throw new Error('No user logged in');
 
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id)
+      const { error } = await supabase.from('profiles').update(updates).eq('id', user.id);
 
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('Profile updated!')
-      await fetchProfile(user.id)
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+      toast.success('Profile updated successfully');
+      return { error: null };
+    } catch (error) {
+      toast.error('Error updating profile');
+      return { error };
     }
+  };
 
-    return { error }
-  }
+  const fetchCars = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_garage')
+        .select('*')
+        .eq('user_id', userId)
+        .order('is_primary', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching cars:', error);
+        return;
+      }
+      setCars(data || []);
+    } catch (error) {
+      console.error('Error fetching cars:', error);
+    }
+  };
+
+  const addCar = async (carData: CarInput) => {
+    try {
+      if (!user) throw new Error('No user logged in');
+
+      // If this is being set as primary, unset other primary cars first
+      if (carData.is_primary) {
+        await supabase
+          .from('user_garage')
+          .update({ is_primary: false })
+          .eq('user_id', user.id);
+      }
+
+      const { data, error } = await supabase
+        .from('user_garage')
+        .insert([{ ...carData, user_id: user.id }])
+        .select()
+        .single();
+
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      setCars((prev) => [data, ...prev]);
+      toast.success('Car added to garage successfully');
+      return { error: null };
+    } catch (error) {
+      toast.error('Error adding car to garage');
+      return { error };
+    }
+  };
+
+  const updateCar = async (carId: string, updates: Partial<CarInput>) => {
+    try {
+      if (!user) throw new Error('No user logged in');
+
+      // If this is being set as primary, unset other primary cars first
+      if (updates.is_primary) {
+        await supabase
+          .from('user_garage')
+          .update({ is_primary: false })
+          .eq('user_id', user.id);
+      }
+
+      const { data, error } = await supabase
+        .from('user_garage')
+        .update(updates)
+        .eq('id', carId)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      setCars((prev) => prev.map((car) => (car.id === carId ? data : car)));
+      toast.success('Car updated successfully');
+      return { error: null };
+    } catch (error) {
+      toast.error('Error updating car');
+      return { error };
+    }
+  };
+
+  const deleteCar = async (carId: string) => {
+    try {
+      if (!user) throw new Error('No user logged in');
+
+      const { error } = await supabase
+        .from('user_garage')
+        .delete()
+        .eq('id', carId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      setCars((prev) => prev.filter((car) => car.id !== carId));
+      toast.success('Car removed from garage');
+      return { error: null };
+    } catch (error) {
+      toast.error('Error removing car from garage');
+      return { error };
+    }
+  };
+
+  const setPrimaryCar = async (carId: string) => {
+    try {
+      if (!user) throw new Error('No user logged in');
+
+      // First, unset all primary cars
+      await supabase
+        .from('user_garage')
+        .update({ is_primary: false })
+        .eq('user_id', user.id);
+
+      // Then set the selected car as primary
+      const { error } = await supabase
+        .from('user_garage')
+        .update({ is_primary: true })
+        .eq('id', carId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      setCars((prev) => prev.map((car) => ({ ...car, is_primary: car.id === carId })));
+      toast.success('Primary car updated');
+      return { error: null };
+    } catch (error) {
+      toast.error('Error setting primary car');
+      return { error };
+    }
+  };
 
   const value = {
     user,
     profile,
-    session,
+    cars,
     loading,
     signIn,
     signUp,
     signOut,
     resetPassword,
     updateProfile,
-  }
+    addCar,
+    updateCar,
+    deleteCar,
+    setPrimaryCar,
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
+  return context;
 }

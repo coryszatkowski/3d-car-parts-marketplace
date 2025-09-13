@@ -1,24 +1,24 @@
-import { Printer, Settings, Car } from "lucide-react";
+import { Printer, Settings, Car } from 'lucide-react';
 
 const steps = [
   {
     icon: Printer,
-    title: "Print it",
-    description: "Download or order the file",
-    detail: "Get STL files instantly or order professionally printed parts delivered to your door"
+    title: 'Print it',
+    description: 'Download or order the file',
+    detail: 'Get STL files instantly or order professionally printed parts delivered to your door',
   },
   {
     icon: Settings,
-    title: "Mod it", 
-    description: "Customize your part or spec",
-    detail: "Adjust fitment, choose materials, or request custom modifications from creators"
+    title: 'Mod it',
+    description: 'Customize your part or spec',
+    detail: 'Adjust fitment, choose materials, or request custom modifications from creators',
   },
   {
     icon: Car,
-    title: "Drive it",
-    description: "Install and hit the road",
-    detail: "Follow installation guides and join the community to show off your build"
-  }
+    title: 'Drive it',
+    description: 'Install and hit the road',
+    detail: 'Follow installation guides and join the community to show off your build',
+  },
 ];
 
 export function HowItWorks() {

@@ -1,7 +1,6 @@
-import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
-import { MessageCircle, Users, Wrench } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Button } from './ui/button';
+import { MessageCircle, Users, Wrench } from 'lucide-react';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
 export function Community() {
   return (
@@ -12,7 +11,8 @@ export function Community() {
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-6">Join the Garage</h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Connect with thousands of car enthusiasts, share your builds, and get help from the community.
+              Connect with thousands of car enthusiasts, share your builds, and get help from the
+              community.
             </p>
 
             {/* Community Links */}
@@ -21,7 +21,9 @@ export function Community() {
                 <MessageCircle className="w-8 h-8 text-primary" />
                 <div>
                   <h4 className="font-semibold text-foreground">Forums</h4>
-                  <p className="text-sm text-muted-foreground">Get help with builds and troubleshooting</p>
+                  <p className="text-sm text-muted-foreground">
+                    Get help with builds and troubleshooting
+                  </p>
                 </div>
               </div>
 

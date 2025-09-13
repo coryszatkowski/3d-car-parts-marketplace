@@ -156,6 +156,43 @@ CREATE TRIGGER handle_updated_at_reviews
   BEFORE UPDATE ON reviews
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
+-- Garage/Cars table for users to store their vehicles
+CREATE TABLE user_garage (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  make TEXT NOT NULL,
+  model TEXT NOT NULL,
+  year INTEGER NOT NULL,
+  trim TEXT,
+  color TEXT,
+  vin TEXT,
+  notes TEXT,
+  is_primary BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for user_garage
+ALTER TABLE user_garage ENABLE ROW LEVEL SECURITY;
+
+-- User garage policies
+CREATE POLICY "Users can view their own garage" ON user_garage
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own cars" ON user_garage
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own cars" ON user_garage
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own cars" ON user_garage
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- Add updated_at trigger to user_garage
+CREATE TRIGGER handle_updated_at_user_garage
+  BEFORE UPDATE ON user_garage
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
 -- Insert some sample data (optional)
 -- This will create some test products once you have users
 -- You can run this after creating your first user account
