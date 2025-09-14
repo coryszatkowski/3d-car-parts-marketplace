@@ -30,6 +30,7 @@
             "@radix-ui/react-toggle-group": "^1.1.2",
             "@radix-ui/react-tooltip": "^1.1.8",
             "@supabase/supabase-js": "^2.57.4",
+            "@types/three": "^0.180.0",
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
@@ -46,6 +47,7 @@
             "recharts": "^2.15.2",
             "sonner": "^2.0.3",
             "tailwind-merge": "*",
+            "three": "^0.180.0",
             "vaul": "^1.1.2"
       },
       "devDependencies": {
@@ -70,17 +72,17 @@
             "vite-plugin-checker": "^0.10.3",
             "vitest": "^3.2.4"
       },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
-    "type-check": "tsc --noEmit"
-  }
+      "scripts": {
+            "dev": "vite",
+            "build": "vite build",
+            "preview": "vite preview",
+            "test": "vitest",
+            "test:ui": "vitest --ui",
+            "test:coverage": "vitest --coverage",
+            "lint": "eslint . --ext .ts,.tsx",
+            "lint:fix": "eslint . --ext .ts,.tsx --fix",
+            "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+            "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+            "type-check": "tsc --noEmit"
+      }
 }

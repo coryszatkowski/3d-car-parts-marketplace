@@ -45,6 +45,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 4. Click "Run" to execute the SQL
 
 This will create:
+
 - ✅ `profiles` table for user data
 - ✅ `products` table for 3D parts
 - ✅ `favorites` table for user favorites
@@ -76,16 +77,19 @@ This will create:
 ## 🚨 Troubleshooting
 
 ### "Invalid API key" error
+
 - Double-check your `.env.local` file
 - Make sure you copied the correct anon key (not the service role key)
 - Restart your development server after changing environment variables
 
 ### "Profile not found" error
+
 - Check that the SQL schema was run successfully
 - Look at the browser console for detailed error messages
 - Verify the `profiles` table exists in your Supabase dashboard
 
 ### Authentication not working
+
 - Check that your Site URL and Redirect URLs are configured correctly
 - Make sure you're using the correct project URL and anon key
 - Check the Supabase logs in your dashboard
@@ -93,6 +97,7 @@ This will create:
 ## 📊 Database Schema Overview
 
 ### Profiles Table
+
 - `id` - UUID (matches auth.users.id)
 - `username` - Unique username
 - `full_name` - User's display name
@@ -104,6 +109,7 @@ This will create:
 - `updated_at` - Last profile update timestamp
 
 ### Products Table
+
 - `id` - Unique product ID
 - `title` - Product name
 - `description` - Product description
@@ -124,14 +130,25 @@ This will create:
 - **Automatic profile creation** when users sign up
 - **Secure authentication** with Supabase Auth
 
+## 📁 Storage Setup (Required for File Uploads)
+
+After running the SQL commands, you need to enable Storage in your Supabase project:
+
+1. Go to **Storage** in your Supabase dashboard
+2. The SQL script should have created `product-images` and `stl-files` buckets
+3. If not created automatically, create them manually:
+   - Bucket name: `product-images` (Public: Yes)
+   - Bucket name: `stl-files` (Public: Yes)
+
 ## 🚀 Next Steps
 
 Once your Supabase setup is complete:
 
 1. **Test user registration and login**
-2. **Create some sample products** in the products table
-3. **Test the favorites and reviews functionality**
-4. **Deploy your app** and update the Site URL in Supabase
+2. **Enable Storage buckets** (see Storage Setup above)
+3. **Test product creation** with file uploads
+4. **Create some sample products** in the products table
+5. **Deploy your app** and update the Site URL in Supabase
 
 ## 📞 Need Help?
 

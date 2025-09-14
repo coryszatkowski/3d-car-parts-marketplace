@@ -1,12 +1,30 @@
-import { Button } from './ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { CarSelector } from './car/CarSelector';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { CarSelector } from "./car/CarSelector";
+import { CarSelection } from "../data/cars";
 
 export function Hero() {
-  const handleCarSelection = (selection: any) => {
-    console.log('Car selected:', selection);
-    // TODO: Navigate to parts page or show results
+  const navigate = useNavigate();
+  const [currentSelection, setCurrentSelection] = useState<CarSelection>({});
+
+  const handleCarSelection = (selection: CarSelection) => {
+    setCurrentSelection(selection);
+  };
+
+  const handleFindParts = () => {
+    // Build search params from car selection
+    const params = new URLSearchParams();
+
+    if (currentSelection.year)
+      params.set("year", currentSelection.year.toString());
+    if (currentSelection.make) params.set("make", currentSelection.make);
+    if (currentSelection.model) params.set("model", currentSelection.model);
+    if (currentSelection.trim) params.set("trim", currentSelection.trim);
+
+    // Navigate to search results page with car parameters
+    navigate(`/search?${params.toString()}`);
   };
 
   return (
@@ -24,14 +42,16 @@ export function Hero() {
               className="text-5xl lg:text-7xl font-bold mb-6"
               style={{
                 fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
               }}
             >
               <span className="text-foreground">Whip</span>
-              <span style={{ color: '#0a68b1' }}>Lab</span>
+              <span style={{ color: "#0a68b1" }}>Lab</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8">Print it. Mod it. Drive it.</p>
+            <p className="text-xl text-muted-foreground mb-8">
+              Print it. Mod it. Drive it.
+            </p>
 
             {/* Car Selector */}
             <div className="bg-card border border-border rounded-lg p-6 mb-8">
@@ -39,12 +59,17 @@ export function Hero() {
                 Find Parts for Your Ride
               </h3>
               <CarSelector onSelectionChange={handleCarSelection} />
-              
+
               <Button
                 className="w-full text-white mt-4"
-                style={{ backgroundColor: '#0a68b1' }}
-                onMouseEnter={(e) => ((e.target as HTMLElement).style.backgroundColor = '#0856a0')}
-                onMouseLeave={(e) => ((e.target as HTMLElement).style.backgroundColor = '#0a68b1')}
+                style={{ backgroundColor: "#0a68b1" }}
+                onMouseEnter={(e) =>
+                  ((e.target as HTMLElement).style.backgroundColor = "#0856a0")
+                }
+                onMouseLeave={(e) =>
+                  ((e.target as HTMLElement).style.backgroundColor = "#0a68b1")
+                }
+                onClick={handleFindParts}
               >
                 Find Parts
               </Button>

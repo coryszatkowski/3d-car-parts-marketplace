@@ -24,6 +24,7 @@ interface AuthContextType {
   ) => Promise<{ error: any }>;
   deleteCar: (carId: string) => Promise<{ error: any }>;
   setPrimaryCar: (carId: string) => Promise<{ error: any }>;
+  becomeCreator: () => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -427,6 +428,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const becomeCreator = async () => {
+    try {
+      if (!user) throw new Error("No user logged in");
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_creator: true })
+        .eq("id", user.id);
+
+      if (error) {
+        toast.error(error.message);
+        return { error };
+      }
+
+      // Update local profile state
+      setProfile((prev) => (prev ? { ...prev, is_creator: true } : prev));
+      toast.success(
+        "Welcome to WHIPLAB Creators! You can now sell your designs."
+      );
+      return { error: null };
+    } catch (error) {
+      toast.error("Error becoming a creator");
+      return { error };
+    }
+  };
+
   const value = {
     user,
     profile,
@@ -442,6 +469,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     updateCar,
     deleteCar,
     setPrimaryCar,
+    becomeCreator,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

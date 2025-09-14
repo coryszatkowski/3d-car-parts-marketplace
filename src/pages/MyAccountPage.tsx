@@ -22,15 +22,20 @@ import {
   ChevronLeft,
   Mail,
   Calendar,
+  Store,
 } from "lucide-react";
 
 export function MyAccountPage() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, becomeCreator } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleBecomeCreator = async () => {
+    await becomeCreator();
   };
 
   if (!user || !profile) {
@@ -216,6 +221,25 @@ export function MyAccountPage() {
                     Manage
                   </Button>
                 </div>
+                {!profile?.is_creator && (
+                  <>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-primary">
+                          Sell your designs on WHIPLAB
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Start earning by sharing your 3D car parts
+                        </p>
+                      </div>
+                      <Button size="sm" onClick={handleBecomeCreator}>
+                        <Store className="h-4 w-4 mr-2" />
+                        Become Creator
+                      </Button>
+                    </div>
+                  </>
+                )}
                 <Separator />
                 <div className="flex items-center justify-between">
                   <div>

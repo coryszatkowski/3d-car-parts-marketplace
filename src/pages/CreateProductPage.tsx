@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
   productAPI,
@@ -7,30 +8,34 @@ import {
   PrintSettings,
   ProductSpecifications,
 } from "../lib/supabase";
-import { CarSelector } from "./car/CarSelector";
-import { useCarCatalog } from "../hooks/useCarCatalog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
+import { CarSelector } from "../components/car/CarSelector";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../components/ui/select";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { Checkbox } from "./ui/checkbox";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Checkbox } from "../components/ui/checkbox";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 import { toast } from "sonner";
 import {
   Upload,
@@ -44,13 +49,8 @@ import {
   DollarSign,
   FileText,
   Image as ImageIcon,
+  ArrowLeft,
 } from "lucide-react";
-
-interface CreateProductModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onProductCreated?: () => void;
-}
 
 const PRODUCT_CATEGORIES = [
   "Exterior",
@@ -72,12 +72,9 @@ const INSTALLATION_DIFFICULTIES = [
   "Professional",
 ] as const;
 
-export function CreateProductModal({
-  isOpen,
-  onClose,
-  onProductCreated,
-}: CreateProductModalProps) {
+export function CreateProductPage() {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   // Basic product info
@@ -302,8 +299,7 @@ export function CreateProductModal({
       } else {
         toast.success("Product created successfully!");
         resetForm();
-        onClose();
-        onProductCreated?.();
+        navigate("/my-account");
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
@@ -313,30 +309,84 @@ export function CreateProductModal({
     }
   };
 
-  const handleClose = () => {
+  const handleCancel = () => {
     if (!loading) {
-      resetForm();
-      onClose();
+      navigate("/my-account");
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-none sm:max-w-none max-h-[95vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Create New Product
-          </DialogTitle>
-          <DialogDescription>
-            Add a new 3D printable car part to your store.
-          </DialogDescription>
-        </DialogHeader>
+  // Check if user is a creator
+  if (!profile?.is_creator) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8 text-muted-foreground">
+          <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p className="text-lg font-medium mb-2">Creator Account Required</p>
+          <p className="text-sm mb-4">
+            You need creator approval to sell products
+          </p>
+          <Button variant="outline" disabled>
+            Contact Admin for Approval
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Basic Information</h3>
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Breadcrumb Navigation */}
+      <div className="mb-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/my-account">My Account</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Create Product</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
+      {/* Page Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCancel}
+          disabled={loading}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <Package className="h-8 w-8" />
+            Create New Product
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Add a new 3D printable car part to your store
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Basic Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Product Title *</Label>
@@ -386,7 +436,7 @@ export function CreateProductModal({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your product, its features, and benefits..."
-                rows={3}
+                rows={4}
               />
             </div>
 
@@ -421,12 +471,19 @@ export function CreateProductModal({
                 </Button>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* File Uploads */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">File Uploads</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* File Uploads */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ImageIcon className="h-5 w-5" />
+              File Uploads
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Product Image</Label>
                 {imagePreview ? (
@@ -505,71 +562,83 @@ export function CreateProductModal({
                 />
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Vehicle Compatibility */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Vehicle Compatibility *</h3>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Select Vehicle:</Label>
-                <CarSelector onSelectionChange={handleCarSelectionChange} />
-              </div>
+        {/* Vehicle Compatibility */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CarIcon className="h-5 w-5" />
+              Vehicle Compatibility *
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select Vehicle:</Label>
+              <CarSelector onSelectionChange={handleCarSelectionChange} />
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  type="button"
-                  onClick={addFitment}
-                  disabled={!isCurrentSelectionValid}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Vehicle
-                </Button>
-                {isCurrentSelectionValid && currentSelection && (
-                  <div className="flex items-center text-sm text-muted-foreground px-3 py-2 bg-muted rounded-md">
-                    <strong>Selected:</strong>&nbsp;
-                    {currentSelection.year} {currentSelection.make}{" "}
-                    {currentSelection.model}
-                    {currentSelection.trim && ` ${currentSelection.trim}`}
-                  </div>
-                )}
-              </div>
-
-              {fitmentList.length > 0 && (
-                <div className="space-y-2">
-                  <Label>Compatible Vehicles ({fitmentList.length}):</Label>
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {fitmentList.map((fitment, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 bg-muted rounded-md"
-                      >
-                        <span className="text-sm">
-                          {fitment.year} {fitment.make} {fitment.model}
-                          {fitment.trim && ` ${fitment.trim}`}
-                          {fitment.engine && ` (${fitment.engine})`}
-                        </span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFitment(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                onClick={addFitment}
+                disabled={!isCurrentSelectionValid}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Vehicle
+              </Button>
+              {isCurrentSelectionValid && currentSelection && (
+                <div className="flex items-center text-sm text-muted-foreground px-3 py-2 bg-muted rounded-md">
+                  <strong>Selected:</strong>&nbsp;
+                  {currentSelection.year} {currentSelection.make}{" "}
+                  {currentSelection.model}
+                  {currentSelection.trim && ` ${currentSelection.trim}`}
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Optional Settings */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Optional Settings</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {fitmentList.length > 0 && (
+              <div className="space-y-2">
+                <Label>Compatible Vehicles ({fitmentList.length}):</Label>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {fitmentList.map((fitment, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-muted rounded-md"
+                    >
+                      <span className="text-sm">
+                        {fitment.year} {fitment.make} {fitment.model}
+                        {fitment.trim && ` ${fitment.trim}`}
+                        {fitment.engine && ` (${fitment.engine})`}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFitment(index)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Optional Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Optional Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <h4 className="font-medium">Installation</h4>
                 <div className="space-y-2">
@@ -611,7 +680,10 @@ export function CreateProductModal({
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-medium">Print Settings</h4>
+                <h4 className="font-medium flex items-center gap-2">
+                  <Printer className="h-4 w-4" />
+                  Print Settings
+                </h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-2">
                     <Label>Layer Height (mm)</Label>
@@ -659,23 +731,24 @@ export function CreateProductModal({
                 </div>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Product"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-4 pt-6 border-t">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading} size="lg">
+            {loading ? "Creating..." : "Create Product"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

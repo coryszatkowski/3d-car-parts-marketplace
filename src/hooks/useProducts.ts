@@ -49,6 +49,33 @@ export function useProducts() {
     }
   };
 
+  const fetchProductsByCarCompatibility = async (carSelection: {
+    year?: string | number;
+    make?: string;
+    model?: string;
+    trim?: string;
+  }) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error } =
+        await productAPI.getProductsByCarCompatibility(carSelection);
+
+      if (error) {
+        setError(error.message);
+        toast.error("Failed to load products");
+      } else {
+        setProducts(data || []);
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteProduct = async (productId: string) => {
     try {
       const { error } = await productAPI.deleteProduct(productId);
@@ -70,6 +97,7 @@ export function useProducts() {
     error,
     fetchCreatorProducts,
     fetchPublishedProducts,
+    fetchProductsByCarCompatibility,
     deleteProduct,
   };
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useProducts } from "../hooks/useProducts";
-import { CreateProductModal } from "./CreateProductModal";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -34,9 +34,9 @@ import {
 
 export function MyProducts() {
   const { profile } = useAuth();
+  const navigate = useNavigate();
   const { products, loading, fetchCreatorProducts, deleteProduct } =
     useProducts();
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (profile?.is_creator) {
@@ -44,8 +44,8 @@ export function MyProducts() {
     }
   }, [profile]);
 
-  const handleProductCreated = () => {
-    fetchCreatorProducts(); // Refresh the products list
+  const handleCreateProduct = () => {
+    navigate("/create-product");
   };
 
   const handleDeleteProduct = async (productId: string) => {
@@ -85,17 +85,11 @@ export function MyProducts() {
           <p className="text-sm mb-4">
             Start creating and selling your 3D car parts
           </p>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={handleCreateProduct}>
             <Edit3 className="h-4 w-4 mr-2" />
             Create Product
           </Button>
         </div>
-
-        <CreateProductModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onProductCreated={handleProductCreated}
-        />
       </>
     );
   }
@@ -109,7 +103,7 @@ export function MyProducts() {
               {products.length} product{products.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={handleCreateProduct}>
             <Edit3 className="h-4 w-4 mr-2" />
             Create Product
           </Button>
@@ -117,7 +111,11 @@ export function MyProducts() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card
+              key={product.id}
+              className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => navigate(`/product/${product.id}`)}
+            >
               <div className="aspect-square bg-muted relative">
                 {product.image_url ? (
                   <img
@@ -146,12 +144,21 @@ export function MyProducts() {
                   </h3>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${product.id}`);
+                        }}
+                      >
                         <Eye className="h-4 w-4 mr-2" />
                         View
                       </DropdownMenuItem>
@@ -227,12 +234,6 @@ export function MyProducts() {
           ))}
         </div>
       </div>
-
-      <CreateProductModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onProductCreated={handleProductCreated}
-      />
     </>
   );
 }

@@ -172,6 +172,29 @@ export const productAPI = {
     }
   },
 
+  // Get a single product by ID
+  async getProductById(
+    productId: string
+  ): Promise<{ data: Product | null; error: any }> {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          `
+          *,
+          creator:profiles(*)
+        `
+        )
+        .eq("id", productId)
+        .eq("is_published", true)
+        .single();
+
+      return { data, error };
+    } catch (error) {
+      return { data: null, error };
+    }
+  },
+
   // Get products by creator
   async getCreatorProducts(
     creatorId?: string
@@ -222,6 +245,91 @@ export const productAPI = {
 
       return { data, error };
     } catch (error) {
+      return { data: null, error };
+    }
+  },
+
+  // Get products by car compatibility
+  async getProductsByCarCompatibility(carSelection: {
+    year?: string | number;
+    make?: string;
+    model?: string;
+    trim?: string;
+  }): Promise<{ data: Product[] | null; error: any }> {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          `
+          *,
+          creator:profiles(*)
+        `
+        )
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        return { data: null, error };
+      }
+
+      // If no car selection criteria, return all products
+      if (!carSelection.year && !carSelection.make && !carSelection.model) {
+        return { data, error };
+      }
+
+      // Filter products based on fitment data
+      const filteredData =
+        data?.filter((product) => {
+          if (!product.fitment || !Array.isArray(product.fitment)) {
+            return false;
+          }
+
+          // Check if any fitment entry matches ALL specified criteria
+          return product.fitment.some((fitment: any) => {
+            // Convert year to number for comparison
+            const searchYear = carSelection.year
+              ? typeof carSelection.year === "string"
+                ? parseInt(carSelection.year, 10)
+                : carSelection.year
+              : null;
+
+            // Check year match (if specified)
+            if (searchYear && fitment.year !== searchYear) {
+              return false;
+            }
+
+            // Check make match (if specified)
+            if (
+              carSelection.make &&
+              fitment.make?.toLowerCase() !== carSelection.make.toLowerCase()
+            ) {
+              return false;
+            }
+
+            // Check model match (if specified)
+            if (
+              carSelection.model &&
+              fitment.model?.toLowerCase() !== carSelection.model.toLowerCase()
+            ) {
+              return false;
+            }
+
+            // Check trim match (if specified and fitment has trim)
+            if (
+              carSelection.trim &&
+              fitment.trim &&
+              fitment.trim.toLowerCase() !== carSelection.trim.toLowerCase()
+            ) {
+              return false;
+            }
+
+            return true;
+          });
+        }) || [];
+
+      return { data: filteredData, error };
+    } catch (error) {
+      console.error("Error fetching products by car compatibility:", error);
       return { data: null, error };
     }
   },

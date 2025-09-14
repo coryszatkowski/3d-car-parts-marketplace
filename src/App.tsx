@@ -31,6 +31,16 @@ const AuthCallback = lazy(() =>
     default: module.AuthCallback,
   }))
 );
+const CreateProductPage = lazy(() =>
+  import("./pages/CreateProductPage").then((module) => ({
+    default: module.CreateProductPage,
+  }))
+);
+const SearchResultsPage = lazy(() =>
+  import("./pages/SearchResultsPage").then((module) => ({
+    default: module.SearchResultsPage,
+  }))
+);
 
 // Loading component for suspense fallback
 function PageLoader() {
@@ -63,6 +73,11 @@ export default function App() {
                   <Route path="/product/:id" element={<ProductPage />} />
                   <Route path="/my-account" element={<MyAccountPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route
+                    path="/create-product"
+                    element={<CreateProductPage />}
+                  />
+                  <Route path="/search" element={<SearchResultsPage />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </Suspense>
